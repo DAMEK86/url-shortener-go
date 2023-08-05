@@ -1,0 +1,110 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" />
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="swagger-ui"></div>
+
+    <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script>
+    window.onload = function() {
+      let baseUrl = window.location.href
+      if (window.location.href.indexOf('#') !== -1) {
+        baseUrl = window.location.href.substring(0, window.location.href.indexOf('#'))
+      }
+
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        url: window.location.href.substr(0, window.location.href.indexOf(window.location.path)) + "/apidocs.json",
+        oauth2RedirectUrl: baseUrl + 'oauth2-redirect.html',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout",
+
+        // Begin custom extensions for SWF services
+        requestInterceptor: (req) => {
+          // all endpoints of our service require a 'Bearer' token, so auto-prefix it if the user did not by himself
+          if(req.headers.Authorization && !req.headers.Authorization.startsWith("Bearer")) {
+              req.headers.Authorization = "Bearer " + req.headers.Authorization
+          }
+          return req
+        },
+        showMutatedRequest: true,
+        validatorUrl: null,
+        operationsSorter: function (a, b) {
+          // apply a more "natural" ordering of the http operations
+          const methodsOrder = ['get', 'post', 'put', 'patch', 'delete', 'options', 'trace'];
+          let result = methodsOrder.indexOf(a.get('method')) - methodsOrder.indexOf(b.get('method'));
+          if (result === 0) {
+            result = a.get('path').localeCompare(b.get('path'));
+          }
+          return result;
+        },
+        // End custom extensions for SWF services
+      });
+
+      // Note: This is a public OAuth client meant for Authorization-Code flow only. It only has a "public"
+      // secret as TM does not support "real" public clients without secret...
+      ui.initOAuth({
+        clientId: "DAIVBADM_MICTM_EMEA_PROD_00112", // SWF_DFS-OAUTH
+        clientSecret: "pretty-public",
+      });
+      // End Swagger UI call region
+
+      window.ui = ui;
+    };
+
+    // hide the (pre-filled) client-id + secret fields for user convenience
+    // (as it is the public client for Authorization-Code flow only, a normal user don't need to care about it)
+    const targetNode = document.getElementById('swagger-ui');
+    const config = {attributes: true, childList: true, subtree: true};
+    const callback = function (mutationsList, observer) {
+      for (let mutation of mutationsList) {
+        if (mutation.type === 'childList' && mutation.target.classList.contains('auth-wrapper')) {
+          document.getElementById('client_id').parentNode.parentNode.style.display = 'none';
+          document.getElementById('client_secret').parentNode.parentNode.style.display = 'none';
+        }
+      }
+    };
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+
+    </script>
+  </body>
+</html>
