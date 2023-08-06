@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 appName='url-shortener'
-VERSION=0.0.1
+VERSION=0.0.2
 
 export CGO_ENABLED=0
 goflags=""
@@ -23,7 +23,7 @@ function task_build {
   GOOS=${os} go build -a -o ${appName} \
   -trimpath \
   -ldflags="-s -w -X github.com/damek86/url-shortener-go/config.BuildVersion=${build_version} -X github.com/damek86/url-shortener-go/config.SourceVersion=${source_version}" \
-   ${goflags} main.go
+   ${goflags} internal/main.go
 }
 
 ## build-container: builds the container image

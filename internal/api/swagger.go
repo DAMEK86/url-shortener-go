@@ -1,10 +1,24 @@
 package api
 
 import (
+	"github.com/damek86/url-shortener-go/internal/config"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/go-openapi/spec"
+	"log"
+	"net/http"
 )
+
+func SetupSwaggerUiServing(wsContainer *restful.Container, cfg config.StaticContent) {
+	if cfg.Disabled {
+		log.Print("Serving Swagger-UI disabled!")
+	} else {
+		log.Printf("Serving Swagger-UI at %s", cfg.HttpPath)
+		wsContainer.Handle(cfg.HttpPath,
+			http.StripPrefix(cfg.HttpPath,
+				http.FileServer(http.Dir(cfg.FilePath))))
+	}
+}
 
 func CreateSwaggerConfig(services []*restful.WebService) restfulspec.Config {
 	return restfulspec.Config{

@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/damek86/url-shortener-go/config"
+	"github.com/damek86/url-shortener-go/internal/config"
 	"github.com/emicklei/go-restful/v3"
 	"log"
 	"net/http"

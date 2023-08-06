@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/damek86/url-shortener-go/url"
+	"github.com/damek86/url-shortener-go/pkg/url"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
 	"net/http"
