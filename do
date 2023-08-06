@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-red='\033[1;31m'
-green='\033[1;32m'
-normal='\033[0m'
-
 appName='url-shortener'
 VERSION=0.0.1
 
