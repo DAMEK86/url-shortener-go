@@ -22,14 +22,18 @@ function task_build {
   build_version=${2:-$VERSION}
   GOOS=${os} go build -a -o ${appName} \
   -trimpath \
-  -ldflags="-s -w -X github.com/damek86/url-shortener-go/config.BuildVersion=${build_version} -X github.com/damek86/url-shortener-go/config.SourceVersion=${source_version}" \
+  -ldflags="-s -w \
+  -X github.com/damek86/url-shortener-go/config.BuildVersion=${build_version} \
+  -X github.com/damek86/url-shortener-go/internal/config.SourceVersion=${source_version}" \
    ${goflags} internal/main.go
 }
 
 ## build-container: builds the container image
 function task_build_container {
-    task_build "linux" ${VERSION}
-    docker build -t damek/${appName}:${VERSION} .
+    docker build \
+    --build-arg BUILD_VERSION=${VERSION} \
+    --build-arg SOURCE_VERSION=$(git rev-parse --short HEAD) \
+    -t damek/${appName}:${VERSION} .
 }
 
 ## run-container: run the container image
