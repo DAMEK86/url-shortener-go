@@ -1,4 +1,4 @@
-module github.com/damek86/url-shortner-go
+module github.com/damek86/url-shortener-go
 
 go 1.20
 

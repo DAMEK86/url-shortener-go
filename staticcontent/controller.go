@@ -1,7 +1,7 @@
 package staticcontent
 
 import (
-	"github.com/damek86/url-shortner-go/config"
+	"github.com/damek86/url-shortener-go/config"
 	"github.com/emicklei/go-restful/v3"
 	"log"
 	"net/http"

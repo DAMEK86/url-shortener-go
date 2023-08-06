@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/damek86/url-shortner-go/url"
+	"github.com/damek86/url-shortener-go/url"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
 	"net/http"
@@ -19,6 +19,7 @@ func RegisterRoutes(router *restful.WebService, services Services) {
 	router.Route(
 		router.GET("/health").
 			To(c.handleGetHealth).
+			Produces(restful.MIME_JSON).
 			Doc("Gets health information about the service.").
 			Metadata(restfulspec.KeyOpenAPITags, []string{"info"}).
 			Returns(http.StatusOK, http.StatusText(http.StatusOK), nil),
@@ -42,6 +43,7 @@ func RegisterRoutes(router *restful.WebService, services Services) {
 			Param(restful.PathParameter("id", "shorten url").
 				DataType("string").Required(true)).
 			Doc("Shorten provided url").
+			Produces(restful.MIME_JSON).
 			Metadata(restfulspec.KeyOpenAPITags, []string{"url"}).
 			Returns(http.StatusSeeOther, http.StatusText(http.StatusSeeOther), nil).
 			Returns(http.StatusNotFound, http.StatusText(http.StatusInternalServerError), ErrorResponse{}),
