@@ -27,9 +27,15 @@ jobs:
       id: version
       with:
         scheme: semver
-
+    - name: set build values
+      run: |
+        echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+        echo "build_version=${{ steps.version.outputs.version }}" >> "$GITHUB_ENV"
     - name: Build
-      run: ./do build "linux" ${{ steps.version.outputs.version }}
+      run: ./do build "linux" ${{ env.build_version }}
+    outputs:
+      buildVersion: ${{ env.build_version }}
+      sourceVersion: ${{ env.sha_short }}
   
   deploy:
     needs: build-and-verify
@@ -67,3 +73,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILD_VERSION=${{ needs.build-and-verify.outputs.buildVersion }}
+            SOURCE_VERSION=${{ needs.build-and-verify.outputs.sourceVersion }}
